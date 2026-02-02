@@ -1,8 +1,15 @@
 const express = require("express");
 
 const app = express();
+
+app.use("/test",(req,res)=>{
+    res.send("Welcome to Node");
+
 app.use((req,res)=>{
-    res.send("Hello from server singh..");
+    res.send("Hello from server singh ji..");
+});
+
+
 });
 
 app.listen(3000,()=> {

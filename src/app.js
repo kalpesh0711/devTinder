@@ -2,22 +2,25 @@ const express = require("express");
 
 const app = express();
 
-app.get("/user",(req,res,next)=>{
-    //res.send("1st Response")
-    next()
+app.use("/admin",(req,res,next)=>{ 
+    console.log("Admin auth is getting checked!");
+    const token = "xyz";
+    const isAdminAuthorized = token ==="xyz";
+    if (!isAdminAuthorized) {
+        res.status(401).send("Unauthorized request");
+    } else {
+        next();
+    }
 });
 
-app.get("/user",(req,res,next)=>{
-   // res.send("2nd Response")
-    next()
+app.get("/admin/getAllData",(req,res)=> {
+    res.send("All Data send");  
 });
 
-app.get("/user",(req,res,next)=>{
-    res.send("3rd Response")
-    next()
+app.get("/admin/deleteData",(req,res)=> {
+    res.send("Deleted a user");   
 });
-
-
+ 
 
 
 app.listen(3000,()=> {

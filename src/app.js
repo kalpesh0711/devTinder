@@ -7,7 +7,7 @@ app.use("/admin",(req,res,next)=>{
     const token = "xyz";
     const isAdminAuthorized = token ==="xyz";
     if (!isAdminAuthorized) {
-        res.status(401).send("Unauthorized request");
+        res.status(401).send("Unauthorized request");   
     } else {
         next();
     }
@@ -21,8 +21,6 @@ app.get("/admin/deleteData",(req,res)=> {
     res.send("Deleted a user");   
 });
  
-
-
 app.listen(3000,()=> {
     console.log("Server is successfully listening on port 3000...")
 });

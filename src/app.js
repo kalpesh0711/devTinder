@@ -1,26 +1,39 @@
 const express = require("express");
+const connectDB = require("./config/database");
+const User = require("./models/user");
 
 const app = express();
 
-app.use("/admin",(req,res,next)=>{ 
-    console.log("Admin auth is getting checked!");
-    const token = "xyz";
-    const isAdminAuthorized = token ==="xyz";
-    if (!isAdminAuthorized) {
-        res.status(401).send("Unauthorized request");   
-    } else {
-        next();
+//creating api to put data
+app.post("/signup",async (req,res) =>{
+
+    const userObj = {
+        firstName:"MS",
+        lastName:"Dhoni",
+        emailId:"ms@dhoni.com",
+        password:"dhoni@123"
     }
+    //creating a new instance of User model
+    const user= new User(userObj);          //or we can directly add data without creat userobj
+    
+    try{
+        await user.save();
+        res.send("User added Successfully");
+    } catch (err)  {
+        res.status(400).send("Error saving the user:"+err.message);
+    }
+    
 });
 
-app.get("/admin/getAllData",(req,res)=> {
-    res.send("All Data send");  
-});
+connectDB()
+  .then(() => {
+    console.log("Database connection established...");
 
-app.get("/admin/deleteData",(req,res)=> {
-    res.send("Deleted a user");   
-});
- 
-app.listen(3000,()=> {
-    console.log("Server is successfully listening on port 3000...")
-});
+    app.listen(3000,()=> {
+    console.log("Server is successfully listening on port 3000...");
+    });
+  })
+  .catch((err)=>{
+    console.error("Database can't be connected");
+    console.error(err.message); // <-- THIS tells the truth 
+  });

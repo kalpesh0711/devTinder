@@ -4,17 +4,15 @@ const User = require("./models/user");
 
 const app = express();
 
+
+app.use(express.json());  //middleware act. for all the routes
+ 
 //creating api to put data
 app.post("/signup",async (req,res) =>{
 
-    const userObj = {
-        firstName:"MS",
-        lastName:"Dhoni",
-        emailId:"ms@dhoni.com",
-        password:"dhoni@123"
-    }
+   
     //creating a new instance of User model
-    const user= new User(userObj);          //or we can directly add data without creat userobj
+    const user= new User(req.body);          //or we can directly add data without creat userobj
     
     try{
         await user.save();

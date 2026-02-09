@@ -4,15 +4,15 @@ const User = require("./models/user");
 
 const app = express();
 
-
-app.use(express.json());  //middleware act. for all the routes
+//signup API dynamic to recieve data frim end user(postman,chrome,..)
+app.use(express.json());  //middleware activ. for all the routes
  
 //creating api to put data
 app.post("/signup",async (req,res) =>{
 
    
     //creating a new instance of User model
-    const user= new User(req.body);          //or we can directly add data without creat userobj
+    const user= new User(req.body);          
     
     try{
         await user.save();
@@ -21,6 +21,21 @@ app.post("/signup",async (req,res) =>{
         res.status(400).send("Error saving the user:"+err.message);
     }
     
+});
+
+
+
+// Delete a user from the database
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete({ _id: userId });
+    //const user = await User.findByIdAndDelete(userId);
+
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong ");
+  }
 });
 
 connectDB()

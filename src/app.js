@@ -4,11 +4,12 @@ const User = require("./models/user");
 
 const app = express();
 
-//signup API dynamic to recieve data frim end user(postman,chrome,..)
+//signup API dynamic to recieve data frim end user(postman,chrome,..) 
 app.use(express.json());  //middleware activ. for all the routes
  
 //creating api to put data
 app.post("/signup",async (req,res) =>{
+  console.log(req.body);
 
    
     //creating a new instance of User model
@@ -20,8 +21,41 @@ app.post("/signup",async (req,res) =>{
     } catch (err)  {
         res.status(400).send("Error saving the user:"+err.message);
     }
-    
+     
 });
+
+// GET /feed - get all the user from database
+app.get("/feed",async(req,res) => {
+   try {
+    const user = await User.find({});
+    
+    res.send(user);
+  } 
+  catch (error) {
+    res.status(400).send("something went wrong")
+    
+  }      
+
+});
+
+app.get("/user",async(req,res)=> {
+  const userEmail = req.body.emailId;          //and whenever u'r doing DB operation alw. use asyc-await bec. they are promise
+  
+  try {
+    const user = await User.find({emailId:userEmail});
+    if (user.length===0) {
+      res.status(401).send("user not found")
+    }
+    res.send(user);
+  } 
+  catch (error) {
+    res.status(400).send("something went wrong")
+    
+  }      
+  
+  
+  
+})
 
 
 
@@ -50,3 +84,7 @@ connectDB()
     console.error("Database can't be connected");
     console.error(err.message); // <-- THIS tells the truth 
   });
+
+
+
+  

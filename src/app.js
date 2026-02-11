@@ -55,7 +55,7 @@ app.get("/user",async(req,res)=> {
   
   
   
-})
+});
 
 
 
@@ -63,13 +63,25 @@ app.get("/user",async(req,res)=> {
 app.delete("/user", async (req, res) => {
   const userId = req.body.userId;
   try {
-    const user = await User.findByIdAndDelete({ _id: userId });
-    //const user = await User.findByIdAndDelete(userId);
+    // const user = await User.findByIdAndDelete({ _id: userId });
+    const user = await User.findByIdAndDelete(userId);
 
     res.send("User deleted successfully");
   } catch (err) {
     res.status(400).send("Something went wrong ");
   }
+});
+
+app.patch("/user",async(req,res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  try {
+    await User.findByIdAndUpdate({_id:userId},data);
+  } catch (error) {
+    res.status(400).send("Something went wrong ");     
+  }
+  
+
 });
 
 connectDB()

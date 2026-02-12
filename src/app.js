@@ -1,21 +1,41 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
+const {validateSignUpData} = require("./utils/validation");
+const bcrypt = require("bcrypt");
+
 
 const app = express();
 
 //signup API dynamic to recieve data frim end user(postman,chrome,..) 
-app.use(express.json());  //middleware activ. for all the routes
+app.use(express.json());  //middleware activ. for all the routes            
  
 //creating api to put data
 app.post("/signup",async (req,res) =>{
+  try{
+
+  validateSignUpData(req);
+
+  const {firstName ,lastName,emailId,password } = req.body;
+  
+   
+  //Encrypt the password
+  const passwordHash = await bcrypt.hash(password, 10);
+
+
   console.log(req.body);
 
    
     //creating a new instance of User model
-    const user= new User(req.body);          
+    const user= new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+
+    });          
     
-    try{
+    
         await user.save();
         res.send("User added Successfully");
     } catch (err)  {
@@ -38,6 +58,7 @@ app.get("/feed",async(req,res) => {
 
 });
 
+//to get data from emailId
 app.get("/user",async(req,res)=> {
   const userEmail = req.body.emailId;          //and whenever u'r doing DB operation alw. use asyc-await bec. they are promise
   
@@ -72,6 +93,8 @@ app.delete("/user", async (req, res) => {
   }
 });
 
+
+//to update
 app.patch("/user",async(req,res) => {
   const userId = req.body.userId;
   const data = req.body;
@@ -96,6 +119,10 @@ connectDB()
     console.error("Database can't be connected");
     console.error(err.message); // <-- THIS tells the truth 
   });
+
+
+
+
 
 
 

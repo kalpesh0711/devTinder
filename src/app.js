@@ -5,13 +5,38 @@ const {validateSignUpData} = require("./utils/validation");
 const bcrypt = require("bcrypt");
 
 
-const app = express();
+const app = express();          
 
 //signup API dynamic to recieve data frim end user(postman,chrome,..) 
-app.use(express.json());  //middleware activ. for all the routes            
+app.use(express.json());  //middleware activ. for all the routes         
+
+
+app.post("/login",async(req,res) => {
+  
+  try {
+    //extracting email and pass
+    const {emailId,password} = req.body;
+    const user = await User.findOne({emailId: emailId});
+    if (!user) {
+      throw new Error("Invalid email credentials");
+    }
+    const isPasswordValid = await bcrypt.compare(password,user.password);
+
+    if (isPasswordValid) {
+      res.send("Login Successful!");
+    } else {
+      throw new Error("Invalid password credentials");
+    }
+    
+  } catch (err) {
+  res.status(400).send(err.message);
+}
+
+});
+
  
 //creating api to put data
-app.post("/signup",async (req,res) =>{
+app.post("/signup",async (req,res) =>{                                             
   try{
 
   validateSignUpData(req);

@@ -90,8 +90,10 @@ app.get("/profile",async(req,res) => {
 
  console.log(decodedMessage);
  const {_id} = decodedMessage;
+ console.log ("Logged in user is: "+ _id);
  console.log(cookies);
-})
+ res.send("Reading cookie");
+});
 
 // GET /feed - get all the user from database
 app.get("/feed",async(req,res) => {

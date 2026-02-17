@@ -5,6 +5,7 @@ const {validateSignUpData} = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const {userAuth} = require("./middlewares/auth");
 
 
 const app = express();
@@ -24,7 +25,7 @@ app.post("/login",async(req,res) => {
     if (!user) {
       throw new Error("Invalid email credentials");
     }
-    const isPasswordValid = await bcrypt.compare(password,user.password);
+    const isPasswordValid = await bcrypt.compare(password,user.password); //left hash value from db
 
     if (isPasswordValid) {
       // create JWT token
@@ -83,16 +84,13 @@ app.post("/signup",async (req,res) =>{
 
 
 app.get("/profile",async(req,res) => { 
-  const cookies = req.cookies;
- const {token} = cookies;
+  try {
+    const user = req.user;
 
- const decodedMessage = await jwt.verify(token,"Dev@Tinder$790");
-
- console.log(decodedMessage);
- const {_id} = decodedMessage;
- console.log ("Logged in user is: "+ _id);
- console.log(cookies);
- res.send("Reading cookie");
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR :" +err.message);
+  }
 });
 
 // GET /feed - get all the user from database
